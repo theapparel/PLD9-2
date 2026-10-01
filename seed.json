@@ -1,0 +1,327 @@
+{
+ "tasks": {
+  "press-kv": {
+   "createdAt": 1790868100002,
+   "createdBy": null,
+   "links": [],
+   "parentId": "",
+   "people": [],
+   "pic": "",
+   "requirement": "",
+   "rounds": [
+    {
+     "date": "",
+     "done": false,
+     "label": "ส่งครั้งที่ 1"
+    }
+   ],
+   "start": "",
+   "status": "todo",
+   "stream": "visual",
+   "title": "คีย์วิชวล / Key visual",
+   "type": "task",
+   "updatedAt": 1790868301626,
+   "updatedBy": "u_Jq6juVPpYvacTZWneh3KVQ"
+  },
+  "press-3loops": {
+   "createdAt": 1790868100001,
+   "createdBy": null,
+   "links": [
+    {
+     "label": "ฟอร์มส่ง (3/10)",
+     "url": "https://forms.gle/gHUnFe1dKDZDZHZ1A"
+    }
+   ],
+   "parentId": "press-kv",
+   "people": [
+    "ทั้งหมด"
+   ],
+   "pic": "",
+   "requirement": "- ข้อความที่จะใส่\n- logo",
+   "rounds": [
+    {
+     "date": "2026-10-03",
+     "done": false,
+     "label": "ส่งครั้งที่ 1"
+    }
+   ],
+   "start": "2026-10-01",
+   "status": "doing",
+   "stream": "visual",
+   "title": "3ห่วง2เงื่อนไข (1)",
+   "type": "task",
+   "updatedAt": 1790869037363,
+   "updatedBy": "u_Jq6juVPpYvacTZWneh3KVQ"
+  },
+  "press-presentation": {
+   "createdAt": 1790868100000,
+   "createdBy": null,
+   "links": [],
+   "parentId": "bsro905de834kaamdlae",
+   "people": [],
+   "pic": "",
+   "requirement": "",
+   "rounds": [
+    {
+     "date": "",
+     "done": false,
+     "label": "ส่งครั้งที่ 1"
+    }
+   ],
+   "start": "",
+   "status": "todo",
+   "stream": "talk",
+   "title": "พรีเซนเทชัน / Presentation",
+   "type": "task",
+   "updatedAt": 1790868058495,
+   "updatedBy": "u_Jq6juVPpYvacTZWneh3KVQ"
+  },
+  "hof712el3y3dkpu8u94h": {
+   "createdAt": 1790866801863,
+   "createdBy": "u_Jq6juVPpYvacTZWneh3KVQ",
+   "links": [
+    {
+     "label": "Form เตรียมของแจกPress",
+     "url": "https://docs.google.com/forms/d/e/1FAIpQLSdU0JGJqdS9nzjWmg_XfoOtiTgT--KsOfepqIbHxM03sZfJ0w/viewform?usp=publish-editor"
+    },
+    {
+     "label": "ข้อมูลสินค้า PRESS",
+     "url": "https://docs.google.com/spreadsheets/d/1XJ9lDFkOPR8dTFAmxeXou5xovmvI2Ctu2Off1mW-IYc/edit?gid=1802398975#gid=1802398975"
+    }
+   ],
+   "parentId": "",
+   "people": [
+    "ทั้งหมด"
+   ],
+   "pic": "",
+   "requirement": "",
+   "rounds": [
+    {
+     "date": "2026-10-03",
+     "done": false,
+     "label": "ส่งครั้งที่ 1"
+    }
+   ],
+   "start": "2026-10-01",
+   "status": "todo",
+   "stream": "press",
+   "title": "เตรียมของแจก Press",
+   "type": "task",
+   "updatedAt": 1790868951512,
+   "updatedBy": "u_Jq6juVPpYvacTZWneh3KVQ"
+  },
+  "bsro905de834kaamdlae": {
+   "createdAt": 1790866803069,
+   "createdBy": "u_Jq6juVPpYvacTZWneh3KVQ",
+   "due": "2026-10-15",
+   "links": [],
+   "pic": "",
+   "requirement": "- เตรียมประชุมย่อยและคุยกันเรื่อง Talk\n- เตรียม presentation",
+   "start": "2026-10-01",
+   "status": "todo",
+   "stream": "talk",
+   "team": "",
+   "title": "Talk session",
+   "type": "task",
+   "updatedAt": 1790868018664,
+   "updatedBy": "u_Jq6juVPpYvacTZWneh3KVQ"
+  }
+ },
+ "agenda": {
+  "d12-master": {
+   "day": "2026-12-12",
+   "detail": "",
+   "from": "16:00",
+   "room": "",
+   "title": "PLD Master Degree Update",
+   "to": "17:00"
+  },
+  "d11-creator": {
+   "day": "2026-12-11",
+   "detail": "Food: ปูน ก้วย ตะ ติ่ง\nCafé & Restaurant: ตั้ว ออย ปอ อิงค์\nFashion & Lifestyle: ตุ๊กตา เปีย อรุ กิฟ\nSpecial: พลอย ลิซ่า วิน\nSupporter: JOB, ก้อย, พี่ชุ, โบ, พี่อุ่ย, เชด",
+   "from": "16:30",
+   "room": "",
+   "title": "พอแล้วดี The Creator ๙.๒ Talk",
+   "to": "18:30",
+   "updatedAt": 1790868890380
+  },
+  "d12-gyotaku": {
+   "day": "2026-12-12",
+   "detail": "",
+   "from": "13:30",
+   "room": "Downstair Room",
+   "title": "Gyotaku Workshop – Moowan",
+   "to": "16:30"
+  },
+  "d11-market": {
+   "day": "2026-12-11",
+   "detail": "Food / Café & Restaurant / Fashion / Design & Lifestyle",
+   "from": "10:00",
+   "room": "",
+   "title": "PLD Market 40 Brands / 40 Booths",
+   "to": "20:00"
+  },
+  "d11-chef": {
+   "day": "2026-12-11",
+   "detail": "",
+   "from": "18:30",
+   "room": "",
+   "title": "Chef’s Table “เว่อวังแบบพอแล้วดี”",
+   "to": "20:00"
+  },
+  "d10-setup": {
+   "day": "2026-12-10",
+   "detail": "",
+   "from": "",
+   "room": "",
+   "title": "Event set-up / ติดตั้งงาน",
+   "to": ""
+  },
+  "d12-breathing": {
+   "day": "2026-12-12",
+   "detail": "",
+   "from": "13:30",
+   "room": "White Room",
+   "title": "Thai Breathing Remedy Workshop – Dui",
+   "to": "14:30"
+  },
+  "d11-keynote": {
+   "day": "2026-12-11",
+   "detail": "พี่ชาลอต & พี่จิมมี่",
+   "from": "13:30",
+   "room": "",
+   "title": "Keynote Talk “จดจำตลอดกาลคือทำตามตลอดไป”",
+   "to": "15:00"
+  },
+  "d12-mind": {
+   "day": "2026-12-12",
+   "detail": "",
+   "from": "15:00",
+   "room": "White Room",
+   "title": "Mind Matters Workshop – Bee",
+   "to": "16:30"
+  },
+  "d12-talk": {
+   "day": "2026-12-12",
+   "detail": "พ่อปัญญา โตกทอง ปราชญ์ชาวบ้านผู้เรียนรู้ระบบนิเวศน์สามน้ำ\nพ่อประสาน กะช่องฮิลล์\nแม่ของเมย์ IRA\nแม่ของแมน Mann Craft",
+   "from": "14:00",
+   "room": "",
+   "title": "Talk “ตัวพ่อตัวแม่ พอแล้วดี The Creator”",
+   "to": "15:30"
+  },
+  "d12-market": {
+   "day": "2026-12-12",
+   "detail": "Food / Café & Restaurant / Fashion / Design & Lifestyle",
+   "from": "10:00",
+   "room": "",
+   "title": "PLD Market 40 Brands / 40 Booths",
+   "to": "20:00"
+  },
+  "d12-chef": {
+   "day": "2026-12-12",
+   "detail": "",
+   "from": "18:00",
+   "room": "",
+   "title": "Chef’s Table ความอุดมสมบูรณ์จากสายน้ำ",
+   "to": "20:00"
+  },
+  "d12-fashionbiz": {
+   "day": "2026-12-12",
+   "detail": "",
+   "from": "10:00",
+   "room": "Upstairs room",
+   "title": "พอแล้วดีเฉพาะกิจ Fashion Business – DAY 1",
+   "to": "18:00"
+  },
+  "d11-press": {
+   "day": "2026-12-11",
+   "detail": "",
+   "from": "15:00",
+   "room": "",
+   "title": "PLD Press Con / Media Interviews",
+   "to": "16:30"
+  }
+ },
+ "meta": {
+  "event": {
+   "endDate": "2026-12-13",
+   "hours": "10:00–20:00",
+   "name": "พอแล้วดีสโมสร",
+   "pic": "",
+   "roster": [
+    {
+     "kind": "brand",
+     "name": "ฟู้ด / Food",
+     "people": [
+      "ปูน",
+      "ก้วย",
+      "ตะ",
+      "ติ่ง"
+     ]
+    },
+    {
+     "kind": "brand",
+     "name": "คาเฟ่ & ร้านอาหาร / Café & Restaurant",
+     "people": [
+      "ตั้ว",
+      "ออย",
+      "ปอ",
+      "อิงค์"
+     ]
+    },
+    {
+     "kind": "brand",
+     "name": "แฟชั่น & ไลฟ์สไตล์ / Fashion & Lifestyle",
+     "people": [
+      "ตุ๊กตา",
+      "เปีย",
+      "อรุ",
+      "กิฟ"
+     ]
+    },
+    {
+     "kind": "brand",
+     "name": "สเปเชียล / Special",
+     "people": [
+      "พลอย",
+      "ลิซ่า",
+      "วิน"
+     ]
+    },
+    {
+     "kind": "team",
+     "name": "ทีมงาน",
+     "people": [
+      "JOB",
+      "ก้อย",
+      "พี่ชุ",
+      "โบ",
+      "พี่อุ่ย",
+      "เชด"
+     ]
+    }
+   ],
+   "setupDate": "2026-12-10",
+   "startDate": "2026-12-11",
+   "streams": [
+    {
+     "key": "press",
+     "name": "สื่อมวลชน / เพรส (Press)"
+    },
+    {
+     "key": "talk",
+     "name": "ทอล์ค / Talk Session"
+    },
+    {
+     "key": "visual",
+     "name": "วิชวลออฟไลน์ / Offline Visual"
+    },
+    {
+     "key": "booth",
+     "name": "บูธ / Market Booth"
+    }
+   ],
+   "venue": "Sama"
+  }
+ }
+}
