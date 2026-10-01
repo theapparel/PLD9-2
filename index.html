@@ -310,6 +310,17 @@ main{padding-bottom:80px}
 
 .notice .r2{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.notice .r2 .inp{flex:1 1 240px;min-height:46px}
 .sync{align-self:center;font-size:13px;color:var(--ink-3);white-space:nowrap}
+.vhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.vtitle{font-size:24px;font-weight:600;line-height:1.3;margin-top:-6px}
+.vrow{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.vl{color:var(--ink-3);font-size:14px;padding-top:2px}
+.vv{min-width:0;overflow-wrap:anywhere}
+.vv .pre{white-space:pre-wrap}
+.vrounds{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.vrounds li{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.vrounds b{font-weight:500}.vo{color:var(--bad);font-weight:500}.vm{color:var(--ink-3)}
+.vkids{display:flex;flex-direction:column;align-items:flex-start}
+@media (max-width:520px){ .vrow{grid-template-columns:1fr;gap:4px} }
 /* Drawer */
 .scrim{position:fixed;inset:0;background:rgba(15,12,0,.45);z-index:20}
 .drawer{position:fixed;top:0;right:0;bottom:0;width:min(620px,100%);background:var(--ground);z-index:21;box-shadow:var(--shadow);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -507,7 +518,7 @@ const L={
   f_agenda:"วาระการประชุม / Agenda", f_agenda_hint:"หัวข้อที่จะคุย ทีละบรรทัด", f_summary:"สรุปการประชุม", f_summary_hint:"ข้อสรุป มติ และงานที่ต้องทำต่อ",
   f_links:"ลิงก์ / Link ที่เกี่ยวข้อง", link_label:"ชื่อลิงก์", link_url:"https://…", add_link:"เพิ่มลิงก์", remove:"ลบ",
   join:"เข้าประชุม", copy:"คัดลอก", copied:"คัดลอกแล้ว",
-  new_item:"รายการใหม่", edit_item:"แก้ไขรายการ", save:"บันทึก", saving:"กำลังบันทึก…", close:"ปิด", del:"ลบ", del_confirm:"กดอีกครั้งเพื่อลบ",
+  new_item:"รายการใหม่", edit_item:"แก้ไขรายการ", view_item:"รายละเอียด", save:"บันทึก", saving:"กำลังบันทึก…", close:"ปิด", del:"ลบ", del_confirm:"กดอีกครั้งเพื่อลบ",
   comments:"ความคิดเห็น", no_comments:"ยังไม่มีความคิดเห็น", write_comment:"เขียนอัปเดตหรือคำถาม…", your_name:"ชื่อของคุณ", post:"ส่งความคิดเห็น",
   saved:"บันทึกแล้ว", added:"เพิ่มแล้ว", deleted:"ลบแล้ว", posted:"ส่งความคิดเห็นแล้ว", needs_title:"กรุณาใส่ชื่องานก่อน", needs_url:"กรุณาใส่ลิงก์",
   readonly:"คุณดูบอร์ดนี้ได้อย่างเดียว ขอสิทธิ์ Editor จากเจ้าของเพื่อแก้ไข",
@@ -951,7 +962,7 @@ function openItem(id,preset){
   if(it){ d={...base,...JSON.parse(JSON.stringify(it))}; d.people=[...people(it)]; d.rounds=JSON.parse(JSON.stringify(rounds(it))).map((r,k)=>({...r,id:r.id||"i"+k})); if(!d.rounds.length) d.rounds=[{label:t("round",1),date:"",done:false}]; }
   else { d={...base,...(preset||{})}; if(preset?.parentId){ const p=TREE.byId[preset.parentId]; if(p) d.stream=streamOf(p); } else if(!preset?.stream&&S.stream!=="all") d.stream=S.stream; }
   if(!Array.isArray(d.links)) d.links=[];
-  S.drawer={kind:"item",id:id||null,d}; drawItem(); if(!id) setTimeout(()=>$("fTitle")?.focus(),30);
+  S.drawer={kind:"item",id:id||null,d,mode:id?"view":"edit"}; if(id){ drawView(); return; } drawItem(); setTimeout(()=>$("fTitle")?.focus(),30);
 }
 function pullItem(){ const D=S.drawer?.d; if(!D||!$("fTitle")) return;
   D.title=$("fTitle").value; D.parentId=$("fParent").value; if($("fStream")) D.stream=$("fStream").value; D.pic=$("fPic").value;
@@ -967,6 +978,43 @@ function parentOptions(selfId,cur){
   for(const s of streamKeys()){ const rows=flatten(rootsIn(s),false).filter(r=>!isM(r.i)&&!banned.has(r.i.id)); if(!rows.length) continue;
     o+=`<optgroup label="${esc(s==="__orphan"?t("orphan"):sName(s))}">${rows.map(r=>`<option value="${esc(r.i.id)}" ${cur===r.i.id?"selected":""}>${"— ".repeat(r.depth)}${esc(r.i.title)}</option>`).join("")}</optgroup>`; }
   return o;
+}
+
+/* read-only detail view (everyone); "แก้ไข" switches to the edit form */
+function drawView(){
+  buildTree(); const id=S.drawer.id; const i=S.items.find(x=>x.id===id); if(!i){ closeDrawer(); return; }
+  const meet=isM(i), td=TD(), ppl=people(i), w=canW();
+  const pid=TREE.parentOf(i), parent=pid?TREE.byId[pid]:null;
+  const crumb=sName(streamOf(i))+(parent?" › "+pathOf(parent).join(" › "):"");
+  const row=(label,val)=>val?`<div class="vrow"><span class="vl">${esc(label)}</span><div class="vv">${val}</div></div>`:"";
+  const pre=s=>s&&String(s).trim()?`<div class="pre">${esc(s)}</div>`:"";
+  let st; if(meet){ const ms=meetState(i); st=`<span class="pill m-${ms}">${esc(t("m_"+ms))}</span>`; } else { const es=effStatus(i); st=`<span class="pill s-${es}">${esc(t("st_"+es))}</span>`; }
+  let b=`<div class="vhead"><span class="type ${meet?"meeting":"task"}">${esc(t(meet?"type_meeting":"type_task"))}</span>${st}</div><h2 class="vtitle">${esc(i.title)}</h2><div>`;
+  b+=row(t("f_pic"), i.pic?`<b>${esc(i.pic)}</b>`:"");
+  b+=row(t("f_people"), ppl.length?`<span class="ppl">${ppl.map(p=>`<span>${esc(p)}</span>`).join("")}</span>`:"");
+  if(meet){
+    b+=row(t("f_date"), i.date?esc(fLong(i.date))+(i.from?` · <span class="num">${esc(i.from)}${i.to?"–"+esc(i.to):""}</span>`:""):"");
+    const u=safeUrl(i.mlink); if(u) b+=row(t("f_mlink"), `<div class="join"><a href="${esc(u)}" target="_blank" rel="noopener">${I.video}${esc(t("join"))}</a><button type="button" class="btn quiet sm" data-copy="${esc(u)}">${esc(t("copy"))}</button></div>`);
+    b+=row(t("f_agenda"), pre(i.agenda)); b+=row(t("f_summary"), pre(i.summary));
+  } else {
+    b+=row(t("f_start"), i.start?esc(fLong(i.start)):"");
+    const rs=rounds(i);
+    if(rs.some(r=>r.date||r.done)) b+=row("กำหนดส่ง", `<ul class="vrounds">${rs.map((r,k)=>{ const n=dnum(r.date), o=!r.done&&n!=null&&n<td&&i.status!=="done";
+      const rel=r.done?t("rnd_done"):n==null?"":(n<td?t("over",td-n):t("left",n-td));
+      return `<li><span class="rd ${r.done?"done":o?"over":!r.date?"nodate":""}">${k+1}</span><b>${esc(r.label||t("round",k+1))}</b>${r.date?` · ${esc(fShort(r.date))}`:""}${rel?` <span class="${o?"vo":"vm"}">· ${esc(rel)}</span>`:""}</li>`; }).join("")}</ul>`);
+    b+=row(t("f_req"), pre(i.requirement));
+  }
+  const ls=(i.links||[]).filter(l=>l.url||l.label);
+  if(ls.length) b+=row(t("f_links"), `<div class="vlinks">${ls.map(l=>{const u=safeUrl(l.url);return u?`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l.label||u)} ↗</a>`:`<span>${esc(l.label)} ${esc(l.url)}</span>`;}).join("")}</div>`);
+  const kids=sorted(kidsOf(i.id));
+  if(kids.length) b+=row(t("subs",kids.length), `<div class="vkids">${kids.map(k=>`<button type="button" class="linkbtn" data-open="${esc(k.id)}">${esc(k.title)}</button>`).join("")}</div>`);
+  b+=`</div>`;
+  b+=tickBlock(i);
+  if(i.updatedAt) b+=`<div class="stamp">${esc(t("updated"))}: <span class="num">${esc(new Date(i.updatedAt).toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"}))}</span></div>`;
+  b+=`<section class="sec" id="cmtBox"></section>`;
+  const foot=`${w&&!meet?`<button type="button" class="btn quiet" data-addsub="${esc(i.id)}">${esc(t("add_sub"))}</button>`:""}<span class="grow"></span><button type="button" class="btn quiet" data-close>${esc(t("close"))}</button>${w?`<button type="button" class="btn dark" data-edit="1">${I.pen}แก้ไข</button>`:""}`;
+  shell(t("view_item"),b,foot,crumb);
+  drawComments();
 }
 function drawItem(){
   buildTree();
@@ -1036,7 +1084,7 @@ async function saveItem(){
          if(!parent) for(const k of descendants(id)) if(k.stream!==body.stream){ try{ await S.db.doc("tasks/"+k.id).update({stream:body.stream}); }catch(e){} } }
        else { body.createdAt=Date.now(); body.createdBy=S.me?.id||null; await S.db.collection("tasks").add(body);
          if(parent) { S.collapsed.delete(parent.id); store.set("col",JSON.stringify([...S.collapsed])); } }
-       closeDrawer(); toast(id?t("saved"):t("added")); }
+       if(id){ toast(t("saved")); openItem(id); } else { closeDrawer(); toast(t("added")); } }
   catch(e){ werr(e); if(btn.isConnected){btn.disabled=false; btn.textContent=t("save");} }
 }
 let armed=false, armT;
@@ -1207,6 +1255,7 @@ document.addEventListener("click",e=>{
   if(el.id==="addItem"||el.id==="fab"){ openItem(null,{type:"task"}); return; }
   if(el.id==="editEvent"){ openEvent(); return; }
   if(ds.new){ openItem(null,{type:ds.new,stream:ds.s}); return; }
+  if(ds.edit&&S.drawer?.kind==="item"){ S.drawer.mode="edit"; drawItem(); return; }
   if(ds.open){ openItem(ds.open); return; }
   if(S.drawer?.kind==="item"){
     if(ds.type){ pullItem(); if(S.drawer.d.type!==ds.type) S.drawer.d.who=undefined; S.drawer.d.type=ds.type; drawItem(); return; }
@@ -1329,7 +1378,7 @@ renderMain();
   const db=makeSheetDb(url); S.db=db; S.dbState="ok";
   const ld={items:0,meta:0}; const ready=()=>{ if(ld.items&&ld.meta) S.loaded=true; };
   db.collection("tasks").onSnapshot(s=>{ S.items=s.docs.map(d=>({id:d.id,type:"task",...d.data()})); ld.items=1; ready(); renderMain();
-    if(S.drawer?.kind==="item"&&S.drawer.id&&!S.items.find(x=>x.id===S.drawer.id)) closeDrawer(); else redrawTicks(); });
+    if(S.drawer?.kind==="item"&&S.drawer.id&&!S.items.find(x=>x.id===S.drawer.id)) closeDrawer(); else if(S.drawer?.kind==="item"&&S.drawer.mode==="view"&&!(document.activeElement&&document.activeElement.id==="cText"&&document.activeElement.value)) drawView(); else redrawTicks(); });
   db.doc("meta/event").onSnapshot(s=>{ S.meta=s.exists?s.data():{}; ld.meta=1; ready(); renderMain(); });
   db.collection("agenda").onSnapshot(s=>{ S.agenda=s.docs.map(d=>({id:d.id,...d.data()})); if(S.loaded) renderMain(); });
   db.collection("links").onSnapshot(s=>{ S.links=s.docs.map(d=>({id:d.id,...d.data()})); if(S.loaded) renderMain(); });
