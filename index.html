@@ -311,6 +311,7 @@ main{padding-bottom:80px}
 .notice .r2{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.notice .r2 .inp{flex:1 1 240px;min-height:46px}
 .sync{align-self:center;font-size:13px;color:var(--ink-3);white-space:nowrap}
 .vhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.vshare{margin-left:auto}
 .vtitle{font-size:24px;font-weight:600;line-height:1.3;margin-top:-6px}
 .vrow{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .vl{color:var(--ink-3);font-size:14px;padding-top:2px}
@@ -991,6 +992,39 @@ function parentOptions(selfId,cur){
   return o;
 }
 
+
+/* plain-text summary for LINE / chat follow-ups */
+const SHARE_URL="https://theapparel.github.io/PLD9-2/";
+function shareText(i){
+  buildTree(); const meet=isM(i), td=TD(), L=[];
+  const pid=TREE.parentOf(i), parent=pid?TREE.byId[pid]:null;
+  L.push((meet?"🗓 ประชุม: ":"📌 งาน: ")+i.title);
+  L.push("หมวด: "+sName(streamOf(i))+(parent?" › "+pathOf(parent).join(" › "):""));
+  if(i.pic) L.push("👤 PIC: "+i.pic);
+  const ppl=people(i); if(ppl.length) L.push("👥 ผู้เกี่ยวข้อง: "+ppl.join(", "));
+  if(meet){
+    if(i.date) L.push("📅 "+fLong(i.date)+(i.from?" · "+i.from+(i.to?"–"+i.to:""):""));
+    const u=safeUrl(i.mlink); if(u) L.push("💻 ลิงก์ประชุม: "+u);
+    if((i.agenda||"").trim()) L.push("","📋 วาระ",i.agenda.trim());
+    if((i.summary||"").trim()) L.push("","📝 สรุปการประชุม",i.summary.trim());
+    const dueHere=S.items.filter(x=>!isM(x)&&rounds(x).some(r=>r.meetingId===i.id));
+    if(dueHere.length) L.push("","📦 งานที่ต้องส่งในประชุมนี้",...dueHere.map(x=>"• "+x.title));
+  } else {
+    const rs=rounds(i).filter(r=>r.date||r.done||r.meetingId);
+    if(rs.length){ L.push("","⏰ กำหนดส่ง");
+      rs.forEach((r,k)=>{ const n=dnum(r.date); const m=r.meetingId?S.items.find(x=>x.id===r.meetingId):null;
+        const rel=r.done?"✓ ส่งแล้ว":n==null?"":(n<td?t("over",td-n):t("left",n-td));
+        L.push("• "+(r.label||t("round",k+1))+(r.date?": "+fLong(r.date):"")+(m?" (ส่งในที่ประชุม: "+m.title+")":"")+(rel?" — "+rel:"")); }); }
+    if((i.requirement||"").trim()) L.push("","📝 สิ่งที่ต้องเตรียม",i.requirement.trim());
+  }
+  const ls=(i.links||[]).filter(l=>(l.url||l.label||"").trim());
+  if(ls.length) L.push("","🔗 ลิงก์",...ls.map(l=>"• "+(l.label&&l.url?l.label+": "+l.url:(l.label||l.url))));
+  if(!meet){ const all=rounds(i); const k=all.findIndex(r=>!r.done&&r.date);
+    if(k>=0&&i.status!=="done"){ const c=subCount(i,all[k],k); if(c.total&&c.missing.length&&c.done) L.push("","⏳ ยังไม่ส่ง ("+(all[k].label||t("round",k+1))+") "+c.missing.length+" คน",c.missing.join(", ")); } }
+  else { const ppl2=reqPeople(i); const no=ppl2.filter(p=>!attOf(i,p.name)).map(p=>p.name); if(ppl2.length&&no.length&&no.length<ppl2.length) L.push("","🙋 ยังไม่ตอบรับ "+no.length+" คน",no.join(", ")); }
+  L.push("","👉 ดูรายละเอียด / อัปเดต: "+SHARE_URL+"#i="+encodeURIComponent(i.id));
+  return L.join("\n");
+}
 /* read-only detail view (everyone); "แก้ไข" switches to the edit form */
 function drawView(){
   buildTree(); const id=S.drawer.id; const i=S.items.find(x=>x.id===id); if(!i){ closeDrawer(); return; }
@@ -1000,7 +1034,7 @@ function drawView(){
   const row=(label,val)=>val?`<div class="vrow"><span class="vl">${esc(label)}</span><div class="vv">${val}</div></div>`:"";
   const pre=s=>s&&String(s).trim()?`<div class="pre">${esc(s)}</div>`:"";
   let st; if(meet){ const ms=meetState(i); st=`<span class="pill m-${ms}">${esc(t("m_"+ms))}</span>`; } else { const es=effStatus(i); st=`<span class="pill s-${es}">${esc(t("st_"+es))}</span>`; }
-  let b=`<div class="vhead"><span class="type ${meet?"meeting":"task"}">${esc(t(meet?"type_meeting":"type_task"))}</span>${st}</div><h2 class="vtitle">${esc(i.title)}</h2><div>`;
+  let b=`<div class="vhead"><span class="type ${meet?"meeting":"task"}">${esc(t(meet?"type_meeting":"type_task"))}</span>${st}<button type="button" class="btn quiet sm vshare" data-share="${esc(i.id)}">${I.copy||""}คัดลอกสรุป</button></div><h2 class="vtitle">${esc(i.title)}</h2><div>`;
   b+=row(t("f_pic"), i.pic?`<b>${esc(i.pic)}</b>`:"");
   b+=row(t("f_people"), ppl.length?`<span class="ppl">${ppl.map(p=>`<span>${esc(p)}</span>`).join("")}</span>`:"");
   if(meet){
@@ -1258,7 +1292,7 @@ async function saveLink(){ const body={label:$("lLabel").value.trim(),url:$("lUr
   if(!body.url){toast(t("needs_url"));return;} if(!body.label) body.label=body.url;
   try{ if(S.drawer.id) await S.db.doc("links/"+S.drawer.id).set(body); else await S.db.collection("links").add({...body,createdAt:Date.now()}); closeDrawer(); toast(t("saved")); }catch(e){werr(e);} }
 
-async function copy(text,btn){ try{ await navigator.clipboard.writeText(text); toast(t("copied")); }catch(e){ const i=document.createElement("input"); i.value=text; i.className="inp"; btn.after(i); i.select(); } }
+async function copy(text,btn,msg){ try{ await navigator.clipboard.writeText(text); toast(msg||t("copied")); }catch(e){ const i=document.createElement(text.includes("\n")?"textarea":"input"); i.value=text; i.className="inp"; if(i.tagName==="TEXTAREA") i.rows=8; btn.after(i); i.select(); } }
 
 /* ---------------- events ---------------- */
 document.addEventListener("click",e=>{
@@ -1325,6 +1359,7 @@ document.addEventListener("click",e=>{
   if(el.id==="saveStream"){ saveStream(); return; }
   if(ds.smove){ moveStream(Number(ds.smove)); return; }
   if(el.id==="delStream"){ armDelete(el,deleteStream); return; }
+  if(ds.share){ const it=S.items.find(x=>x.id===ds.share); if(it) copy(shareText(it),el,"คัดลอกสรุปแล้ว วางใน LINE ได้เลย"); return; }
   if(ds.copy){ copy(ds.copy,el); return; }
 });
 document.addEventListener("change",e=>{ if((e.target.id==="fParent"||e.target.classList.contains("rmeet"))&&S.drawer?.kind==="item"){ pullItem(); drawItem(); } });
@@ -1395,7 +1430,7 @@ renderMain();
   if(!url){ S.dbState="setup"; S.loaded=true; renderMain(); return; }
   S.me={id:DEVICE}; S.user=null;
   const db=makeSheetDb(url); S.db=db; S.dbState="ok";
-  const ld={items:0,meta:0}; const ready=()=>{ if(ld.items&&ld.meta) S.loaded=true; };
+  const ld={items:0,meta:0}; const ready=()=>{ if(ld.items&&ld.meta&&!S.loaded){ S.loaded=true; const m=location.hash.match(/^#i=(.+)$/); if(m) setTimeout(()=>{ const id=decodeURIComponent(m[1]); if(S.items.find(x=>x.id===id)) openItem(id); },0); } };
   db.collection("tasks").onSnapshot(s=>{ S.items=s.docs.map(d=>({id:d.id,type:"task",...d.data()})); ld.items=1; ready(); renderMain();
     if(S.drawer?.kind==="item"&&S.drawer.id&&!S.items.find(x=>x.id===S.drawer.id)) closeDrawer(); else if(S.drawer?.kind==="item"&&S.drawer.mode==="view"&&!(document.activeElement&&document.activeElement.id==="cText"&&document.activeElement.value)) drawView(); else redrawTicks(); });
   db.doc("meta/event").onSnapshot(s=>{ S.meta=s.exists?s.data():{}; ld.meta=1; ready(); renderMain(); });
