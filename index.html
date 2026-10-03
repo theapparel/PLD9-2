@@ -1019,9 +1019,14 @@ function shareText(i){
   }
   const ls=(i.links||[]).filter(l=>(l.url||l.label||"").trim());
   if(ls.length) L.push("","🔗 ลิงก์",...ls.map(l=>"• "+(l.label&&l.url?l.label+": "+l.url:(l.label||l.url))));
-  if(!meet){ const all=rounds(i); const k=all.findIndex(r=>!r.done&&r.date);
-    if(k>=0&&i.status!=="done"){ const c=subCount(i,all[k],k); if(c.total&&c.missing.length&&c.done) L.push("","⏳ ยังไม่ส่ง ("+(all[k].label||t("round",k+1))+") "+c.missing.length+" คน",c.missing.join(", ")); } }
-  else { const ppl2=reqPeople(i); const no=ppl2.filter(p=>!attOf(i,p.name)).map(p=>p.name); if(ppl2.length&&no.length&&no.length<ppl2.length) L.push("","🙋 ยังไม่ตอบรับ "+no.length+" คน",no.join(", ")); }
+  const byGroup=list=>{ const g={}; list.forEach(p=>{ const k=String(p.group||"").split(" / ")[0]; (g[k]=g[k]||[]).push(p.name); }); return Object.entries(g).map(([k,v])=>"• "+k+": "+v.join(", ")); };
+  const rp=reqPeople(i);
+  if(!meet){ const all=rounds(i); const k=all.findIndex(r=>!r.done);
+    if(k>=0&&i.status!=="done"&&rp.length){ const rk=rKey(all[k],k); const miss=rp.filter(p=>!subOf(i,rk,p.name));
+      if(miss.length) L.push("","⏳ ยังไม่ส่ง ("+(all[k].label||t("round",k+1))+") "+miss.length+"/"+rp.length+" คน",...byGroup(miss)); } }
+  else if(rp.length){ const no=rp.filter(p=>!attOf(i,p.name)), nn=rp.filter(p=>attOf(i,p.name)==="n");
+    if(no.length) L.push("","🙋 ยังไม่ตอบรับ "+no.length+"/"+rp.length+" คน",...byGroup(no));
+    if(nn.length) L.push("","✗ ไม่มา "+nn.length+" คน",...byGroup(nn)); }
   L.push("","👉 ดูรายละเอียด / อัปเดต: "+SHARE_URL+"#i="+encodeURIComponent(i.id));
   return L.join("\n");
 }
